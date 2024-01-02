@@ -1,0 +1,13 @@
+tr{
+    background-color: gray;
+}
+
+td:last-child{
+    display: flex;
+}
+
+button.close{
+    background-color: aqua;
+
+
+}
