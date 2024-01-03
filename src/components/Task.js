@@ -1,61 +1,96 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import './Task.css'
 
-export default function Task({inputDate}) {
-    const [Task, setTask] = useState({
-        id:'',
-        description:inputDate.description,
-        addedDate:inputDate.addedDate,
-        startDate:inputDate.startDate,
-        deadLineDate:'',
-        remainingTime:'',
-        completion:0,
-        editMode:true,
+export default function Task({ initiateNewTaskData,handleRemoveTask }) {
+    
+    const [task, setTask] = useState({
+        id: initiateNewTaskData.id,
+        description: '',
+        addedDate: initiateNewTaskData.addedDate,
+        startDate: initiateNewTaskData.startDate,
+        deadLineDate: '',
+        remainingTime: '',
+        completion: 0,
+        editMode: true,
 
     })
-   
 
-    const handleInput = (e,taskKey)=>{
-        const updatedTask = {...Task,[taskKey]: e.target.value}
-        console.log({[taskKey]: e.target.value});
-        setTask(updatedTask)
-            
+    
+    useEffect(() => {
+        console.log('rendering Task element ')
+    })
+
+    // calculateRemainingTime
+    const calculateRemainingTime = () => {
+        let remainingTimeStatus = ''
+        if (task.deadLineDate === '') {
+            remainingTimeStatus='no deadline defined '
+        } else {
+            remainingTimeStatus='will calculate'
+        }
+        console.log(remainingTimeStatus)
+        return remainingTimeStatus
+        }
+
+    useEffect(() => {
+
+        setTask({ ...task,remainingTime : calculateRemainingTime()})
+    
+    }, [task.deadLineDate])
+    
+
+    const handleInput = (e,inputFieldName)=>{
+        const updatedTask = {...task,[inputFieldName]: e.target.value}
+        // console.log({[inputFieldName]: e.target.value});
+        setTask(updatedTask)           
     }
+
+    const okButtonHandler = () => {
+        console.log(task.deadLineDate)   
+        setTask({ ...task, editMode: false })
+
+        
+        
+    }
+
 
   return (
     <>
         <td>
             <input 
-                disabled={!Task.editMode} 
-                value={Task.description} 
+                disabled={!task.editMode} 
+                value={task.description} 
                 type='textarea'
                 onChange={e=>handleInput(e,'description')} />
         </td>
-        <td>{Task.addedDate}</td>
+        <td>{task.addedDate}</td>
         <td>
             <input 
-                disabled={!Task.editMode} 
+                disabled={!task.editMode} 
                 type='datetime-local' 
-                value={Task.startDate}
+                value={task.startDate}
                 onChange={e=>handleInput(e,'startDate')}/>
         </td>
         <td>
             <input 
-                disabled={!Task.editMode} 
+                disabled={!task.editMode} 
                 type='datetime-local' 
-                value={Task.deadLineDate}
+                value={task.deadLineDate}
                 onChange={e=>handleInput(e,'deadLineDate')}/>
         </td>
-        <td></td>
-        <td>{Task.completion}</td>
+        <td>
+              {task.remainingTime}
+        </td>
+        <td>{task.completion}</td>
         <td>
             <button 
                 type='button'
-                onClick={()=>setTask({...Task,editMode:true})}>
+                onClick={()=>setTask({...task,editMode:true})}>
                     editMode
             </button>
-            <button type='button' onClick={()=>setTask({...Task,editMode:false})}>ok</button>
-            <button className='close' type='button' onClick={()=>null}>X</button>
+            <button type='button' onClick={()=>okButtonHandler(task.id)}>ok</button>
+              <button className='close' type='button'
+                  onClick={() => handleRemoveTask(task.id)}>X</button>
         </td>
         
     </>
