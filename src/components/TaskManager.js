@@ -22,7 +22,9 @@ function TaskManager() {
     console.log('rendering TaskManager element ')
     // console.log(taskItems)
   })
- 
+
+
+
   const addNewTask = () => {
     const runTime = new Date();
     const initiateNewTaskData = {
@@ -33,8 +35,9 @@ function TaskManager() {
     setTaskItem([...taskItems, initiateNewTaskData]);
   };
 
+
+
   const taskDataChangeHandler = (newData) => {
-    console.log(newData)
     setTaskItem(prevTaskItems=>prevTaskItems.map(task=>task.id===newData.id?newData:task))
     
   }
@@ -59,7 +62,23 @@ function TaskManager() {
     
     setSortType(preSortType => -1 * preSortType)
     setTaskItem(sortedTaskItems)
-  }
+  } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <>
@@ -81,17 +100,17 @@ function TaskManager() {
     <table>
       <thead>
         <tr className="header-row">
-          <th style={{ cursor: 'pointer' }}
+          <th style={{ cursor: 'pointer',userSelect:'none' }}
               onClick={() => handleSort('description')}>description</th>
-          <th style={{ cursor: 'pointer' }}
+          <th style={{ cursor: 'pointer', userSelect:'none' }}
             onClick={()=>handleSort('addedDate')}>Added Date</th>
-          <th style={{ cursor: 'pointer' }}
+          <th style={{ cursor: 'pointer', userSelect:'none' }}
             onClick={()=>handleSort('startDate')}>start date</th>
-          <th style={{ cursor: 'pointer' }}
+          <th style={{ cursor: 'pointer', userSelect:'none' }}
             onClick={()=>handleSort('deadLineDate')}>deadLineDate</th>
-          <th style={{ cursor: 'pointer' }}
+          <th style={{ cursor: 'pointer', userSelect:'none' }}
             onClick={()=>handleSort('remainingTime')}>remaining Time</th>
-          <th style={{ cursor: 'pointer' }}
+          <th style={{ cursor: 'pointer', userSelect:'none' }}
             onClick={()=>handleSort('completion')}>completion</th>
           <th>
             <button className="" onClick={addNewTask}>

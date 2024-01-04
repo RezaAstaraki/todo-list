@@ -1,6 +1,7 @@
 import React,{useEffect, useState} from 'react'
 import './Task.css'
 
+
 export default function Task({ initiateNewTaskData,taskDataChangeHandler,handleRemoveTask }) {
     
     const [task, setTask] = useState({
@@ -21,43 +22,53 @@ export default function Task({ initiateNewTaskData,taskDataChangeHandler,handleR
     })
 
     // calculateRemainingTime
-    const calculateRemainingTime = () => {
-        let remainingTimeStatus = ''
-        if (task.deadLineDate === '') {
-            remainingTimeStatus='no deadline defined '
-        } else {
-            remainingTimeStatus='will calculate'
-        }
-        // console.log(remainingTimeStatus)
-        return remainingTimeStatus
-        }
+const calculateRemainingTime = () => {
+    const intervalCalcTime = setInterval(() => {
+        setTask(prev => {
+            console.log('deadLineDate = ', prev.deadLineDate);
+            let result = '';
+
+            if (prev.deadLineDate === '') {
+                result = 'no deadline defined ';
+            } else {
+                const now = Date.now();
+                const differenceInSeconds = (new Date(prev.deadLineDate) - now) / 3000;
+
+                if (differenceInSeconds < 0) {
+                    result = 'deadline has passed';
+                } else {
+                    const days = Math.floor(differenceInSeconds / (24 * 60 * 60));
+                    const hours = Math.floor((differenceInSeconds % (60 * 60 * 24)) / (60 * 60));
+                    const minutes = Math.floor((differenceInSeconds % (60 * 60)) / 60);
+                    result = `${days} days ${hours} hours ${minutes} minutes`;
+                }
+            }
+
+            console.log('interval is running', 'state is', result);
+            return { ...prev, remainingTime: result };
+            });
+        }, 1000);
+    };
 
     useEffect(() => {
-        setTask({ ...task,remainingTime : calculateRemainingTime()})
-    }, [task.deadLineDate])
+            calculateRemainingTime()
+    }, [])
     
 
     const handleInput = (e,inputFieldName)=>{
-        const updatedTask = {...task,[inputFieldName]: e.target.value}
-        // console.log({[inputFieldName]: e.target.value});
-        setTask(updatedTask)           
+        setTask(prevTask=>({
+            ...prevTask,[inputFieldName]: e.target.value})) 
+        console.log('after update = ',task)          
     }
 
-    const okButtonHandler = () => {
-        // console.log(task.deadLineDate)   
+    const okButtonHandler = () => { 
         setTask({ ...task, editMode: false }) 
     }
 
     useEffect(() => {
-
         taskDataChangeHandler(task)
-    
-
     },[task] )
     
-
-
-
 
   return (
     <>
@@ -84,9 +95,16 @@ export default function Task({ initiateNewTaskData,taskDataChangeHandler,handleR
                 onChange={e=>handleInput(e,'deadLineDate')}/>
         </td>
         <td>
-              {task.remainingTime}
+        
+                {task.remainingTime} 
         </td>
-        <td>{task.completion}</td>
+        <td>
+            <input 
+                disabled={!task.editMode} 
+                type='number' 
+                value={task.completion}
+                onChange={e=>handleInput(e,'completion')}/>   
+        </td>
         <td>
             <button 
                 type='button'
