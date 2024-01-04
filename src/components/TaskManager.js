@@ -30,9 +30,14 @@ function TaskManager() {
         addedDate:formatDateTime(runTime),
         startDate:formatDateTime(runTime,true),
     }
-    
     setTaskItem([...taskItems, initiateNewTaskData]);
   };
+
+  const taskDataChangeHandler = (newData) => {
+    console.log(newData)
+    setTaskItem(prevTaskItems=>prevTaskItems.map(task=>task.id===newData.id?newData:task))
+    
+  }
 
 
   
@@ -41,27 +46,34 @@ function TaskManager() {
     setTaskItem(updateTaskItems)
   }
   const [sortType, setSortType] = useState(1)
-  const handleSort = ([by]) => {
+  const handleSort = (sortBy) => {
+    console.log(sortBy)
 
     const sortedTaskItems = [...taskItems]
-    sortedTaskItems.sort((a, z) => a.by  < z.by ? sortType: -sortType) 
+    sortedTaskItems.sort((a, z) => {
+      if (a[sortBy] < z[sortBy]) { return sortType }
+      if (a[sortBy] > z[sortBy]) { return -sortType }
+      return  0
+  })
 
     
     setSortType(preSortType => -1 * preSortType)
     setTaskItem(sortedTaskItems)
-    
-    
-
   }
 
   return (
     <>
       <ul>   
+        
        
         {taskItems.map(item => <li key={item.id}>
+                                  <span>description: {item.description} </span>
                                   <span>id: {item.id} </span>
                                   <span>added: {item.addedDate} </span>
                                   <span>started : {item.startDate} </span>
+                                  <span>deadLineDate : {item.deadLineDate} </span>
+                                  <span>remaining Time : {item.remainingTime} </span>
+                                  <span>completion : {item.completion} </span>
                                   <span> </span>
                                 </li>)}
         
@@ -70,13 +82,17 @@ function TaskManager() {
       <thead>
         <tr className="header-row">
           <th style={{ cursor: 'pointer' }}
-              onClick={() => handleSort('addedDate')}>description</th>
+              onClick={() => handleSort('description')}>description</th>
           <th style={{ cursor: 'pointer' }}
-            onClick={()=>handleSort('description')}>Added Date</th>
-          <th>started date</th>
-          <th>deadLineDate</th>
-          <th>remaining Time</th>
-          <th>completion</th>
+            onClick={()=>handleSort('addedDate')}>Added Date</th>
+          <th style={{ cursor: 'pointer' }}
+            onClick={()=>handleSort('startDate')}>start date</th>
+          <th style={{ cursor: 'pointer' }}
+            onClick={()=>handleSort('deadLineDate')}>deadLineDate</th>
+          <th style={{ cursor: 'pointer' }}
+            onClick={()=>handleSort('remainingTime')}>remaining Time</th>
+          <th style={{ cursor: 'pointer' }}
+            onClick={()=>handleSort('completion')}>completion</th>
           <th>
             <button className="" onClick={addNewTask}>
               add
@@ -88,7 +104,9 @@ function TaskManager() {
       <tbody>
         {taskItems.map((task) => (
           <tr key={task.id}>
-            <Task initiateNewTaskData={task} handleRemoveTask={handleRemoveTask}/>
+            <Task initiateNewTaskData={task}
+              taskDataChangeHandler={taskDataChangeHandler}
+              handleRemoveTask={handleRemoveTask} />
           </tr>
         ))}
       </tbody>

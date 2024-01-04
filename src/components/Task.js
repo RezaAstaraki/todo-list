@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react'
 import './Task.css'
 
-export default function Task({ initiateNewTaskData,handleRemoveTask }) {
+export default function Task({ initiateNewTaskData,taskDataChangeHandler,handleRemoveTask }) {
     
     const [task, setTask] = useState({
         id: initiateNewTaskData.id,
@@ -28,14 +28,12 @@ export default function Task({ initiateNewTaskData,handleRemoveTask }) {
         } else {
             remainingTimeStatus='will calculate'
         }
-        console.log(remainingTimeStatus)
+        // console.log(remainingTimeStatus)
         return remainingTimeStatus
         }
 
     useEffect(() => {
-
         setTask({ ...task,remainingTime : calculateRemainingTime()})
-    
     }, [task.deadLineDate])
     
 
@@ -46,12 +44,19 @@ export default function Task({ initiateNewTaskData,handleRemoveTask }) {
     }
 
     const okButtonHandler = () => {
-        console.log(task.deadLineDate)   
-        setTask({ ...task, editMode: false })
-
-        
-        
+        // console.log(task.deadLineDate)   
+        setTask({ ...task, editMode: false }) 
     }
+
+    useEffect(() => {
+
+        taskDataChangeHandler(task)
+    
+
+    },[task] )
+    
+
+
 
 
   return (
