@@ -48,21 +48,35 @@ function TaskManager() {
     const updateTaskItems =taskItems.filter((task)=>task.id !==taskID)
     setTaskItem(updateTaskItems)
   }
+
   const [sortType, setSortType] = useState(1)
-  const handleSort = (sortBy) => {
-    console.log(sortBy)
+const handleSort = (sortBy) => {
+    setSortType((prevSortType) => -prevSortType);
 
-    const sortedTaskItems = [...taskItems]
-    sortedTaskItems.sort((a, z) => {
-      if (a[sortBy] < z[sortBy]) { return sortType }
-      if (a[sortBy] > z[sortBy]) { return -sortType }
-      return  0
-  })
+    const sortedTaskItems = [...taskItems].sort((a, b) => {
+        const valueA = a[sortBy];
+        const valueB = b[sortBy];
 
-    
-    setSortType(preSortType => -1 * preSortType)
-    setTaskItem(sortedTaskItems)
-  } 
+        if (typeof valueA === 'string' && typeof valueB === 'string') {
+            return sortType * valueA.localeCompare(valueB);
+        }
+
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return sortType * (valueA - valueB);
+        }
+
+        if (valueA instanceof Date && valueB instanceof Date) {
+            return sortType * (valueA - valueB);
+        }
+
+        // Handle other data types if needed
+
+        return 0;
+    });
+
+    setTaskItem(sortedTaskItems);
+};
+
 
 
 

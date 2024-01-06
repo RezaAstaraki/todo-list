@@ -47,7 +47,7 @@ const calculateRemainingTime = () => {
             console.log('interval is running', 'state is', result);
             return { ...prev, remainingTime: result };
             });
-        }, 1000);
+        }, 3000);
     };
 
     useEffect(() => {
